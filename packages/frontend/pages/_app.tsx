@@ -12,10 +12,10 @@ function MarketPlace({ Component, pageProps }: AppProps) {
             <a className="mr-4 text-green-400">Home</a>
           </Link>
           <Link href="/create-nft">
-            <a className="mr-6 text-green-400">Create NFT</a>
+            <a className="mr-4 text-green-400">Create NFT</a>
           </Link>
           <Link href="/my-nfts">
-            <a className="mr-6 text-green-400">My NFTs</a>
+            <a className="mr-4 text-green-400">My NFTs</a>
           </Link>
         </div>
       </nav>
