@@ -46,21 +46,21 @@ function CreateNFT() {
       <div className="w-1/2 flex flex-col pb-12">
         <input
           placeholder="NFT Name"
-          className="mt-8 border rounded p-4"
+          className="mt-8 border rounded p-4 border-green-400"
           onChange={(e) =>
             updateFormInput({ ...formInput, name: e.target.value })
           }
         />
         <textarea
           placeholder="NFT Description"
-          className="mt-2 border rounded p-4"
+          className="mt-2 border rounded p-4 border-green-400"
           onChange={(e) =>
             updateFormInput({ ...formInput, description: e.target.value })
           }
         />
         <input
           placeholder="NFT Price in Eth"
-          className="mt-2 border rounded p-4"
+          className="mt-2 border rounded p-4 border-green-400"
           onChange={(e) =>
             updateFormInput({ ...formInput, price: e.target.value })
           }
