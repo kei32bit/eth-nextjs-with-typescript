@@ -15,8 +15,12 @@
     "typescript": "^4.4.3"
   },
   "scripts": {
+    "node": "npx hardhat node",
     "compile": "npx hardhat compile",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.ts --network localhost",
+    "deploy:rinkeby": "npx hardhat run scripts/deploy.ts --network rinkeby",
+    "deploy:mumbai": "npx hardhat run scripts/deploy.ts --network mumbai"
   },
   "dependencies": {}
 }

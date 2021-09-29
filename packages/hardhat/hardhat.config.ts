@@ -7,7 +7,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const INFURA_ID = process.env.INFURA_ID;
-const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
@@ -28,7 +28,12 @@ module.exports = {
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
-      accounts: [`0x${RINKEBY_PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
+    mumbai: {
+      url: `https://rpc-mumbai.maticvigil.com`,
+      accounts: [`0x${PRIVATE_KEY}`],
+      gasPrice: 8000000000,
     },
   },
   solidity: {
