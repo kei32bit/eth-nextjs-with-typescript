@@ -23,7 +23,7 @@ function getLibrary(provider: any): Web3Provider {
   return library;
 }
 
-function ConnectWallet(): JSX.Element {
+export default function ConnectWallet(): JSX.Element {
   // const { activate, activateBrowserWallet } = useEthers();
   const [open, setOpen] = useState(false);
   const { chainId, account, activate, active } = useWeb3React<Web3Provider>();
@@ -68,5 +68,3 @@ function ConnectWallet(): JSX.Element {
     </>
   );
 }
-
-export default ConnectWallet;

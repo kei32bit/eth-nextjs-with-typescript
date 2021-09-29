@@ -7,9 +7,9 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "hardhat/console.sol";
 
 contract NFTMarket is ReentrancyGuard {
-    using Counters for Counter.Counters;
-    Counter.Counters private _itemIds;
-    Counter.Counters private _itemSoldsNum;
+    using Counters for Counters.Counter;
+    Counters.Counter private _itemIds;
+    Counters.Counter private _itemSoldsNum;
 
     address payable owner;
     uint256 listingPrice = 0.0025 ether;
@@ -48,9 +48,9 @@ contract NFTMarket is ReentrancyGuard {
         address nftContract,
         uint256 tokenId,
         uint256 price
-    ) public payable nftContract {
+    ) public payable nonReentrant {
         require(price>0, "price must be over 0");
-        require(msg.value == listingPrice, "listingprice must be over 0");
+        require(msg.value == price, "listingprice must not be changed");
 
         _itemIds.increment();
         uint256 itemId = _itemIds.current();
@@ -59,7 +59,7 @@ contract NFTMarket is ReentrancyGuard {
             itemId,
             nftContract,
             tokenId,
-            payrable(msg.sender),
+            payable(msg.sender),
             payable(address(0)),
             price,
             false
@@ -67,7 +67,7 @@ contract NFTMarket is ReentrancyGuard {
 
         IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
 
-        emit MarketItemCreaeted(
+        emit MarketItemCreated(
             itemId,
             nftContract,
             tokenId,
