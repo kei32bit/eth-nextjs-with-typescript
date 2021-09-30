@@ -9,6 +9,7 @@ import Market from "../../hardhat/artifacts/contracts/Market.sol/NFTMarket.json"
 import axios from "axios";
 import Loading from "../components/Loading/Loading";
 import { MarketItem, ShowItem } from "../types/item";
+// import Web3 from "web3";
 
 const Home: NextPage = () => {
   const [nfts, setNfts] = useState<ShowItem[]>();
@@ -19,7 +20,8 @@ const Home: NextPage = () => {
   }, []);
 
   const fetchMarketItems = async () => {
-    const provider = new ethers.providers.JsonRpcProvider();
+    // const web3 = new Web3(Web3.givenProvider);
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const nftContract = new ethers.Contract(nftAddress, NFT.abi, provider);
     const marketContract = new ethers.Contract(
       nftMarketAddress,
@@ -59,23 +61,29 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="grid grid-cols-3 gap-4">
+      <main className="">
         {loading === "loaded" && !nfts?.length ? (
           // <Loading />
-          <div className="flex justify-center text-center">
-            There is no NFTs.
-          </div>
+          <div className="justify-center text-center">There is no NFTs.</div>
         ) : loading === "not-loaded" ? (
-          <div className="w-full justify-center">
+          <div className="w-full">
             <Loading />
           </div>
         ) : (
-          <div className="max-w-sm rounded overflow-hidden shadow-lg">
+          <div
+            // style={{ maxWidth: "1600px" }}
+            className="p-20 grid grid-cols-4 gap-4  sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4"
+          >
             {nfts?.map((nft, i) => (
-              <div key={i} className="w-full overflow-hidden">
-                <img className="w-full" src={nft.image} />
-                <div className="px-6 py-4">
-                  <div className="font-bold text-xl mb-2">{nft.name}</div>
+              <div key={i} className="border shadow rounded-xl overflow-hidden">
+                <img src={nft.image} />
+                <div className="px-10 py-10">
+                  <p
+                    style={{ height: "64px" }}
+                    className="font-bold text-xl mb-2"
+                  >
+                    {nft.name}
+                  </p>
                   <p className="text-gray-700 text-base">{nft.desc}</p>
                   <p className="text-gray-700 text-base">
                     {nft.itemId.toString()}
