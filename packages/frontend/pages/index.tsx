@@ -1,9 +1,56 @@
+import { useEthers } from "@usedapp/core";
 import type { NextPage } from "next";
 import Head from "next/head";
-// import { injected } from "../components/WalletConnect";
-// import { useWeb3React } from "@web3-react/core";
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
+import { nftAddress, nftMarketAddress } from "../config/address";
+import NFT from "../../hardhat/artifacts/contracts/NFT.sol/NFT.json";
+import Market from "../../hardhat/artifacts/contracts/Market.sol/NFTMarket.json";
+import axios from "axios";
+import Loading from "../components/Loading/Loading";
+import { MarketItem, ShowItem } from "../types/item";
 
 const Home: NextPage = () => {
+  const [nfts, setNfts] = useState<ShowItem[]>();
+  const [loading, setLoading] = useState("not-loaded");
+
+  useEffect(() => {
+    fetchMarketItems();
+  }, []);
+
+  const fetchMarketItems = async () => {
+    const provider = new ethers.providers.JsonRpcProvider();
+    const nftContract = new ethers.Contract(nftAddress, NFT.abi, provider);
+    const marketContract = new ethers.Contract(
+      nftMarketAddress,
+      Market.abi,
+      provider
+    );
+    const data: MarketItem[] = await marketContract.fetchNFTMarket();
+
+    const items = await Promise.all(
+      data.map(async (i) => {
+        const tokenURI = await nftContract.tokenURI(i.tokenId);
+        const meta = await axios.get(tokenURI);
+        const price = ethers.utils.formatUnits(String(i.price), "ether");
+
+        const item: ShowItem = {
+          itemId: i.itemId,
+          tokenId: i.tokenId,
+          seller: i.seller,
+          owner: i.owner,
+          price: price,
+          image: meta.data.image,
+          name: meta.data.name,
+          desc: meta.data.desc,
+        };
+        return item;
+      })
+    );
+    setNfts(items);
+    setLoading("loaded");
+  };
+
   return (
     <div className="flex flex-col items-center min-h-screen py-2">
       <Head>
@@ -12,54 +59,49 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5">
-        <div className="max-w-sm rounded overflow-hidden shadow-lg">
-          <img
-            className="w-full"
-            src="https://i.gyazo.com/eae6a9a8a8e325c02c5abc2adf8d9413.png"
-            alt="Mountain"
-          />
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">Orca</div>
-            <p className="text-gray-700 text-base">orca in the sea</p>
-            <p className="text-gray-700 text-base">$1.00</p>
+      <main className="grid grid-cols-3 gap-4">
+        {loading === "loaded" && !nfts?.length ? (
+          // <Loading />
+          <div className="flex justify-center text-center">
+            There is no NFTs.
           </div>
-        </div>
-        <div className="max-w-sm rounded overflow-hidden shadow-lg">
-          <img
-            className="w-full"
-            src="https://i.gyazo.com/eae6a9a8a8e325c02c5abc2adf8d9413.png"
-            alt="Mountain"
-          />
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">Orca</div>
-            <p className="text-gray-700 text-base">orca in the sea</p>
-            <p className="text-gray-700 text-base">$1.00</p>
+        ) : loading === "not-loaded" ? (
+          <div className="w-full justify-center">
+            <Loading />
           </div>
-        </div>
-        <div className="max-w-sm rounded overflow-hidden shadow-lg">
-          <img
-            className="w-full"
-            src="https://i.gyazo.com/eae6a9a8a8e325c02c5abc2adf8d9413.png"
-            alt="Mountain"
-          />
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">Orca</div>
-            <p className="text-gray-700 text-base">orca in the sea</p>
-            <p className="text-gray-700 text-base">$1.00</p>
+        ) : (
+          <div className="max-w-sm rounded overflow-hidden shadow-lg">
+            {nfts?.map((nft, i) => (
+              <div key={i} className="w-full overflow-hidden">
+                <img className="w-full" src={nft.image} />
+                <div className="px-6 py-4">
+                  <div className="font-bold text-xl mb-2">{nft.name}</div>
+                  <p className="text-gray-700 text-base">{nft.desc}</p>
+                  <p className="text-gray-700 text-base">
+                    {nft.itemId.toString()}
+                  </p>
+                  <p className="text-gray-700 text-base">
+                    {nft.tokenId.toString()}
+                  </p>
+                  <p className="text-gray-700 text-base">
+                    holder: {nft.seller.slice(0, 8)}.......
+                    {nft.seller.slice(-8)}
+                  </p>
+                  <p className="text-gray-700 text-base">price: ${nft.price}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </main>
-
       <footer className="flex items-center justify-center w-full h-24 border-t">
         <a
           className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://github.com/kei32bit"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{" "}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
+          kei32bit
         </a>
       </footer>
     </div>
