@@ -5,13 +5,7 @@ import Market from "../../hardhat/artifacts/contracts/Market.sol/NFTMarket.json"
 import { useRouter } from "next/dist/client/router";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
-import uploadStorage from "../utils/nftStorage";
-
-interface Metadata {
-  name: string;
-  description: string;
-  image: string;
-}
+import { uploadStorage, createNFTStorageURI } from "../utils/nftStorage";
 
 export default function CreateNFT(): JSX.Element {
   const [fileUrl, setFileUrl] = useState("");
@@ -31,24 +25,10 @@ export default function CreateNFT(): JSX.Element {
       const result = await uploadStorage(file);
       console.log("result: ", result);
       const nftStorageURI = result.ipnft;
-
-      // metadataUrl: https://bafyreif53jiiw3lbsc56opxc3z5uzin6n34jhmbjclbs3nxqnotflh2wim.ipfs.dweb.link/metadata.json
-      const metadataUrl = `https://${nftStorageURI}.ipfs.dweb.link/metadata.json`;
-      const req = (): Promise<Metadata> =>
-        fetch(metadataUrl)
-          .then((resp) => {
-            return resp.json();
-          })
-          .catch((err) => {
-            console.log("Error getting metadata.json: ", err);
-          });
-
-      const data = await req();
-      // https://ipfs.io/ipfs/bafybeign5ai6z4cwrzihha4hdragzbeouw67235gal6kxpodwiel6mdmzq/orca.jpg
-      const url = data.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+      const url = await createNFTStorageURI(nftStorageURI);
       console.log("image url", url);
       setIsLoading(false);
-      setFileUrl(url);
+      setFileUrl(String(url));
     } catch (err) {
       console.log("Error uploading a file: ", err);
     }
@@ -71,26 +51,9 @@ export default function CreateNFT(): JSX.Element {
       const result = await uploadStorage(nftData);
       console.log("result: ", result);
       const nftStorageURI = result.ipnft;
-
-      // metadataUrl: https://bafyreif53jiiw3lbsc56opxc3z5uzin6n34jhmbjclbs3nxqnotflh2wim.ipfs.dweb.link/metadata.json
-      const metadataUrl = `https://${nftStorageURI}.ipfs.dweb.link/metadata.json`;
-      const req = (): Promise<Metadata> =>
-        fetch(metadataUrl)
-          .then((resp) => {
-            return resp.json();
-          })
-          .catch((err) => {
-            console.log("Error getting metadata.json: ", err);
-          });
-
-      const data = await req();
-      // https://ipfs.io/ipfs/bafybeign5ai6z4cwrzihha4hdragzbeouw67235gal6kxpodwiel6mdmzq/orca.jpg
-      const url = data.image.replace("ipfs://", "https://ipfs.io/ipfs/");
+      const url = await createNFTStorageURI(nftStorageURI);
       console.log("image url", url);
-
-      // const added = await ipfs.add(data);
-      // const url = `https://ipfs.infura.io/ipfs/{$added.path}`;
-      saveToChain(url);
+      saveToChain(String(url));
     } catch (error) {
       console.log("can not upload to ipfs. err: `$error`");
     }
@@ -169,7 +132,6 @@ export default function CreateNFT(): JSX.Element {
             )}
           </ul>
         )}
-
         {formInput.name === "" ||
         formInput.description === "" ||
         formInput.price === "" ||
