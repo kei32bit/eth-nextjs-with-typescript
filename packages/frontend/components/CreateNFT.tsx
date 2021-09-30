@@ -6,7 +6,8 @@ import { useRouter } from "next/dist/client/router";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
 import { uploadStorage, createNFTStorageURI } from "../utils/nftStorage";
-import Loading from "./Loading";
+import Loading from "./Loading/Loading";
+import LongLoading from "./Loading/LongLoading";
 
 export default function CreateNFT(): JSX.Element {
   const [fileUrl, setFileUrl] = useState("");
@@ -16,6 +17,7 @@ export default function CreateNFT(): JSX.Element {
     name: "",
     description: "",
   });
+  const [isMinting, setIsMinting] = useState(false);
   const router = useRouter();
 
   const uploadImage = async (e: any) => {
@@ -36,6 +38,7 @@ export default function CreateNFT(): JSX.Element {
   };
 
   const createNFT = async () => {
+    setIsMinting(true);
     const { name, description, price } = formInput;
     if (!name || !description || !price || !fileUrl) {
       console.log(
@@ -83,7 +86,6 @@ export default function CreateNFT(): JSX.Element {
       signer
     );
     const listingPrice = await marketContract.getListingPrice();
-    const listingPriceStr = String(listingPrice);
     const marketTransaction = await marketContract.createMarketItem(
       nftAddress,
       tokenId,
@@ -97,7 +99,67 @@ export default function CreateNFT(): JSX.Element {
   return (
     <div className="flex justify-center">
       <div className="w-1/2 flex flex-col pb-12">
-        <input
+        {!isMinting ? (
+          <LongLoading />
+        ) : (
+          <>
+            <input
+              placeholder="NFT Name"
+              className="mt-8 border rounded p-4 border-green-400"
+              onChange={(e) =>
+                updateFormInput({ ...formInput, name: e.target.value })
+              }
+            />
+            <textarea
+              placeholder="NFT Description"
+              className="mt-2 border rounded p-4 border-green-400"
+              onChange={(e) =>
+                updateFormInput({ ...formInput, description: e.target.value })
+              }
+            />
+            <input
+              placeholder="NFT Price in Eth"
+              className="mt-2 border rounded p-4 border-green-400"
+              onChange={(e) =>
+                updateFormInput({ ...formInput, price: e.target.value })
+              }
+            />
+            <input
+              type="file"
+              name="Asset"
+              className="my-4"
+              onChange={uploadImage}
+            />
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <ul>
+                {fileUrl && (
+                  <img className="rounded mt-4" width="350" src={fileUrl} />
+                )}
+              </ul>
+            )}
+            {formInput.name === "" ||
+            formInput.description === "" ||
+            formInput.price === "" ||
+            fileUrl === "" ? (
+              <button
+                className="font-bold mt-4 bg-gray-400 text-white rounded p-4 shadow-lg"
+                disabled={true}
+              >
+                Create NFT
+              </button>
+            ) : (
+              <button
+                onClick={createNFT}
+                className="font-bold mt-4 bg-green-400 text-white rounded p-4 shadow-lg"
+              >
+                Create NFT
+              </button>
+            )}
+          </>
+        )}
+        {/* <input
           placeholder="NFT Name"
           className="mt-8 border rounded p-4 border-green-400"
           onChange={(e) =>
@@ -150,7 +212,7 @@ export default function CreateNFT(): JSX.Element {
           >
             Create NFT
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );
