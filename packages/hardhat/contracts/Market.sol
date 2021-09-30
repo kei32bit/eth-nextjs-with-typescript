@@ -76,11 +76,13 @@ contract NFTMarket is ReentrancyGuard {
             price,
             false
         );
+        uint256 balance = address(this).balance;
+        console.log("address(this): %s, balance: %s",address(this),balance);
     }
 
     function fetchNFTMarket() public view returns (MarketItem[] memory) {
         uint itemCount = _itemIds.current();
-        uint unsoldItemCount = itemCount;
+        uint unsoldItemCount = _itemIds.current() - _itemSoldsNum.current();
         uint currentIndex = 0;
 
         MarketItem[] memory items = new MarketItem[](unsoldItemCount);
