@@ -95,7 +95,6 @@ const CreateNFT = () => {
     );
     await marketTransaction.wait();
     router.push("/");
-    // setIsMinting(false);
   };
 
   return (
