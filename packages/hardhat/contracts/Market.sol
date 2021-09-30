@@ -19,7 +19,7 @@ contract NFTMarket is ReentrancyGuard {
     }
 
     struct MarketItem {
-        uint itemID;
+        uint itemId;
         address nftContract;
         uint256 tokenId;
         address payable seller;
@@ -28,7 +28,7 @@ contract NFTMarket is ReentrancyGuard {
         bool sold;
     }
 
-    mapping(uint256=>MarketItem) private itemIdToMarketItem;
+    mapping(uint256=>MarketItem) private idToMarketItem;
 
     event MarketItemCreated (
         uint indexed itemId,
@@ -55,7 +55,7 @@ contract NFTMarket is ReentrancyGuard {
         _itemIds.increment();
         uint256 itemId = _itemIds.current();
 
-        itemIdToMarketItem[itemId] = MarketItem(
+        idToMarketItem[itemId] = MarketItem(
             itemId,
             nftContract,
             tokenId,
@@ -78,6 +78,21 @@ contract NFTMarket is ReentrancyGuard {
         );
     }
 
+    function fetchNFTMarket() public view returns (MarketItem[] memory) {
+        uint itemCount = _itemIds.current();
+        uint unsoldItemCount = itemCount;
+        uint currentIndex = 0;
 
+        MarketItem[] memory items = new MarketItem[](unsoldItemCount);
+        for (uint i=0; i<itemCount;i++) {
+            if (idToMarketItem[i+1].owner == address(0)) {
+                uint currentId = idToMarketItem[i + 1].itemId;
+                MarketItem storage currentItem = idToMarketItem[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex+=1;
+            }
+        }
+        return items;
+    }
 
 }
