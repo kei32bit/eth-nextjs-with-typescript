@@ -9,7 +9,7 @@ import Market from "../../hardhat/artifacts/contracts/Market.sol/NFTMarket.json"
 import axios from "axios";
 import Loading from "../components/Loading/Loading";
 import { MarketItem, ShowItem } from "../types/item";
-// import Web3 from "web3";
+import BuyNFT from "../components/BuyNFT";
 
 const Home: NextPage = () => {
   const [nfts, setNfts] = useState<ShowItem[]>();
@@ -20,7 +20,6 @@ const Home: NextPage = () => {
   }, []);
 
   const fetchMarketItems = async () => {
-    // const web3 = new Web3(Web3.givenProvider);
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const nftContract = new ethers.Contract(nftAddress, NFT.abi, provider);
     const marketContract = new ethers.Contract(
@@ -63,17 +62,13 @@ const Home: NextPage = () => {
 
       <main className="">
         {loading === "loaded" && !nfts?.length ? (
-          // <Loading />
           <div className="justify-center text-center">There is no NFTs.</div>
         ) : loading === "not-loaded" ? (
           <div className="w-full">
             <Loading />
           </div>
         ) : (
-          <div
-            // style={{ maxWidth: "1600px" }}
-            className="p-20 grid grid-cols-4 gap-4  sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4"
-          >
+          <div className="p-20 grid grid-cols-3 gap-4  sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3">
             {nfts?.map((nft, i) => (
               <div key={i} className="border shadow rounded-xl overflow-hidden">
                 <img src={nft.image} />
@@ -86,16 +81,13 @@ const Home: NextPage = () => {
                   </p>
                   <p className="text-gray-700 text-base">{nft.desc}</p>
                   <p className="text-gray-700 text-base">
-                    {nft.itemId.toString()}
-                  </p>
-                  <p className="text-gray-700 text-base">
-                    {nft.tokenId.toString()}
-                  </p>
-                  <p className="text-gray-700 text-base">
                     holder: {nft.seller.slice(0, 8)}.......
                     {nft.seller.slice(-8)}
                   </p>
-                  <p className="text-gray-700 text-base">price: ${nft.price}</p>
+                  <p className="text-gray-700 text-base">
+                    price: {nft.price}ETH
+                  </p>
+                  <BuyNFT nft={nft} />
                 </div>
               </div>
             ))}
