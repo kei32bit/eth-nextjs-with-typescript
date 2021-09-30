@@ -29,9 +29,6 @@ function MarketPlace({ Component, pageProps }: AppProps) {
           <Link href="/create-nft">
             <a className="mr-4 text-green-400">Create NFT</a>
           </Link>
-          <Link href="/my-nfts">
-            <a className="mr-4 text-green-400">My NFTs</a>
-          </Link>
         </div>
       </nav>
       <Component {...pageProps} />
