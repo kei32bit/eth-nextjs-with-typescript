@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { nftAddress, nftMarketAddress } from "../config/address";
 import NFT from "../../hardhat/artifacts/contracts/NFT.sol/NFT.json";
 import Market from "../../hardhat/artifacts/contracts/Market.sol/NFTMarket.json";
@@ -15,6 +15,7 @@ interface Metadata {
 
 export default function CreateNFT(): JSX.Element {
   const [fileUrl, setFileUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [formInput, updateFormInput] = useState({
     price: "",
     name: "",
@@ -23,6 +24,7 @@ export default function CreateNFT(): JSX.Element {
   const router = useRouter();
 
   const uploadImage = async (e: any) => {
+    setIsLoading(true);
     const file = e.target.files[0];
 
     try {
@@ -45,6 +47,7 @@ export default function CreateNFT(): JSX.Element {
       // https://ipfs.io/ipfs/bafybeign5ai6z4cwrzihha4hdragzbeouw67235gal6kxpodwiel6mdmzq/orca.jpg
       const url = data.image.replace("ipfs://", "https://ipfs.io/ipfs/");
       console.log("image url", url);
+      setIsLoading(false);
       setFileUrl(url);
     } catch (err) {
       console.log("Error uploading a file: ", err);
@@ -157,13 +160,34 @@ export default function CreateNFT(): JSX.Element {
           className="my-4"
           onChange={uploadImage}
         />
-        {fileUrl && <img className="rounded mt-4" width="350" src={fileUrl} />}
-        <button
-          onClick={createNFT}
-          className="font-bold mt-4 bg-green-400 text-white rounded p-4 shadow-lg"
-        >
-          Create NFT
-        </button>
+        {isLoading ? (
+          <div>Loading ...</div>
+        ) : (
+          <ul>
+            {fileUrl && (
+              <img className="rounded mt-4" width="350" src={fileUrl} />
+            )}
+          </ul>
+        )}
+
+        {formInput.name === "" ||
+        formInput.description === "" ||
+        formInput.price === "" ||
+        fileUrl === "" ? (
+          <button
+            className="font-bold mt-4 bg-gray-400 text-white rounded p-4 shadow-lg"
+            disabled={true}
+          >
+            Create NFT
+          </button>
+        ) : (
+          <button
+            onClick={createNFT}
+            className="font-bold mt-4 bg-green-400 text-white rounded p-4 shadow-lg"
+          >
+            Create NFT
+          </button>
+        )}
       </div>
     </div>
   );
