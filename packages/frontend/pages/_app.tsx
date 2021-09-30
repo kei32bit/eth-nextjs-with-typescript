@@ -1,7 +1,6 @@
 import type { AppProps } from "next/app";
 import "tailwindcss/tailwind.css";
 import Link from "next/link";
-// import DappMenu from "../components/DappMenu";
 import ConnectWallet from "../components/ConnectWallet";
 import { Web3ReactProvider } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";

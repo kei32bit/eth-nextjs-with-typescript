@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-import { useEthers } from "@usedapp/core";
 import React, { useState } from "react";
 import Modal from "./Modal";
 import { InjectedConnector } from "@web3-react/injected-connector";

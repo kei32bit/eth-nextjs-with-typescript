@@ -1,8 +1,6 @@
-// import type { AppProps } from "next/app";
 import "tailwindcss/tailwind.css";
 
 function MyNFTs() {
-  // return <Component {...pageProps} />;
   return (
     <div className="p-10">
       {/* Card 1 */}
