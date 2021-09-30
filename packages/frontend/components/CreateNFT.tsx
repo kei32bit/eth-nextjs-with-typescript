@@ -6,6 +6,7 @@ import { useRouter } from "next/dist/client/router";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
 import { uploadStorage, createNFTStorageURI } from "../utils/nftStorage";
+import Loading from "./Loading";
 
 export default function CreateNFT(): JSX.Element {
   const [fileUrl, setFileUrl] = useState("");
@@ -124,7 +125,7 @@ export default function CreateNFT(): JSX.Element {
           onChange={uploadImage}
         />
         {isLoading ? (
-          <div>Loading ...</div>
+          <Loading />
         ) : (
           <ul>
             {fileUrl && (
