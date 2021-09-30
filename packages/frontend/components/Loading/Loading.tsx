@@ -1,4 +1,4 @@
-export default function Loading(): JSX.Element {
+const Loading: React.FC = () => {
   return (
     <div>
       <svg
@@ -23,4 +23,6 @@ export default function Loading(): JSX.Element {
       </svg>
     </div>
   );
-}
+};
+
+export default Loading;

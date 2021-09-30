@@ -12,15 +12,6 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* <div className="flex flex-col items-center justify-center">
-        <button
-          onClick={connect}
-          className="absolute top-0 right-4 py-2 mt-20 mb-4 text-lg font-bold text-white rounded-lg w-56 bg-blue-600 hover:bg-blue-800"
-        >
-          Connect to MetaMask
-        </button>
-      </div> */}
-
       <main className="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5">
         <div className="max-w-sm rounded overflow-hidden shadow-lg">
           <img
